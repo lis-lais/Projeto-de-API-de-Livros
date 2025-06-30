@@ -1,14 +1,12 @@
 function validateBookData({ title, author, year, genre }) {
     const missingFields = [];
 
-    if (!title) missingFields.push('title');
-    if (!author) missingFields.push('author');
-    if (!year) missingFields.push('year');
-    if (!genre) missingFields.push('genre');
+    if (!title || title.trim() === '') missingFields.push('title');
+    if (!author || author.trim() === '') missingFields.push('author');
+    if (!year && year !== 0) missingFields.push('year'); // cuidado com 0 como falso
+    if (!genre || genre.trim() === '') missingFields.push('genre');
 
-    if (missingFields.length > 0) {
-        throw new Error(`Os seguintes campos são obrigatórios: ${missingFields.join(',')}`);
-    }
+    return missingFields;
 }
 
 module.exports = validateBookData;

@@ -1,15 +1,6 @@
-const express = require('express');
-const cors = require('cors');
-const mongoose = require('mongoose');
 require('dotenv').config();
-
-const bookRoutes = require('./src/routes/bookRoutes');
-
-const app = express();
-
-app.use(express.json());
-app.use(cors());
-app.use(bookRoutes);
+const mongoose = require('mongoose');
+const app = require('./src/app');
 
 // Conectar ao MongoDB
 mongoose.connect(process.env.MONGO_URI)
@@ -25,7 +16,3 @@ mongoose.connect(process.env.MONGO_URI)
   });
 
 
-// Rota de teste
-app.get("/", (req, res) => {
-  res.send("API de Livros funcionando!");
-});
