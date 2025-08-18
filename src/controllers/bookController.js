@@ -16,7 +16,13 @@ class BookController {
             }
             
             const book = await bookService.createBook(req.body);
-            res.status(201).json(book);
+            res.status(201).json({
+                id: book._id.toString(),
+                title: book.title,
+                author: book.author,
+                year: book.year,
+                genre: book.genre
+            });
         } catch (error) {
             res.status(400).json({ error: error.message });
         }
@@ -30,7 +36,16 @@ class BookController {
             return res.status(200).json({ message: 'Nenhum livro cadastrado.' });
         }
 
-        res.json(books);
+        //converte _id para id
+        const formattedBooks = books.map(book => ({
+            id: book._id.toString(),
+            title: book.title,
+            author: book.author,
+            year: book.year,
+            genre: book.genre
+        }))
+
+        res.json(formattedBooks);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
