@@ -14,14 +14,43 @@ class BookRepository {
         return Book.findByIdAndDelete(id);
     }
     async search(filters) {
+        const { q, title, author, genre, year, page = 1, limit= 20 } = filters;
+
         const query = {};
+
+        //busca genérica (q)
+        if (q) {
+            const regex = new RegExp(q, 'i');
+            query.$or = [
+                { title: regex },
+                { author: regex},
+                { genre: regex},
+            ];
+        }
+
+        //filtros específicos
+        if (title) query.title = new RegExp(title, 'i'); //RegExp(..., 'i') permite busca parcial e case-insensitive.
+        if (author) query.author = new RegExp(author, 'i');
+        if (genre) query.genre = new RegExp(genre, 'i');
+        if (year) query.year = Number(year);
+
+        const pageNum = Math.max(parseInt(page, 10) || 1, 1);
+        const limitNum = (Math.min(parseInt(limit, 10) || 20, 1), 100);
+
+        const [items, total] = await Promise.all([
+            Book.find(query)
+                .skip((pageNum - 1) * limitNum)
+                .limit(limitNum),
+            Book.countDocuments(query)
+        ]);
     
-        if (filters.title) query.title = new RegExp(filters.title, 'i'); //RegExp(..., 'i') permite busca parcial e case-insensitive.
-        if (filters.author) query.author = new RegExp(filters.author, 'i');
-        if (filters.genre) query.genre = new RegExp(filters.genre, 'i');
-        if (filters.year) query.year = Number(filters.year);
-    
-        return Book.find(query);
+        return {
+            data: items,
+            page: pageNum,
+            limit: limitNum,
+            total,
+            hasMore: pageNum * limitNum < total
+        };
     }
 }
 

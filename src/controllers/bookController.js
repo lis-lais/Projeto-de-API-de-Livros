@@ -75,11 +75,11 @@ class BookController {
     }
     async search(req, res) {
         try {
-            const filters = req.query;
-            const books = await bookService.searchBooks(filters);
+            
+            const books = await bookService.searchBooks(req.query);
     
-            if (books.length === 0) {
-                return res.status(404).json({ message: 'Nenhum livro encontrado com os critérios fornecidos' });
+            if (books.data.length === 0) {
+                return res.status(200).json({ data: [], message: 'Nenhum livro encontrado com os critérios fornecidos' });
             }
     
             res.json(books);
