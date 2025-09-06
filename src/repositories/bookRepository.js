@@ -14,20 +14,25 @@ class BookRepository {
         return Book.findByIdAndDelete(id);
     }
     async search(filters) {
-        const { q, title, author, genre, year, page = 1, limit= 20 } = filters;
+        const { term, title, author, genre, year, page = 1, limit= 20 } = filters;
 
         const query = {};
 
-        //busca genérica (q)
-        if (q) {
-            const regex = new RegExp(q, 'i');
+        //busca genérica (term)
+        if (term) {
+            const regex = new RegExp(term, 'i');
             query.$or = [
                 { title: regex },
-                { author: regex},
-                { genre: regex},
-                { year: regex}
+                { author: regex },
+                { genre: regex }
             ];
+
+         // se term for número, também buscar no year
+        if (!isNaN(term)) {
+            query.$or.push({ year: Number(term) });
         }
+        }
+
 
         //filtros específicos
         if (title) query.title = new RegExp(title, 'i'); //RegExp(..., 'i') permite busca parcial e case-insensitive.
