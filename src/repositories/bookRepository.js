@@ -25,6 +25,7 @@ class BookRepository {
                 { title: regex },
                 { author: regex},
                 { genre: regex},
+                { year: regex}
             ];
         }
 
