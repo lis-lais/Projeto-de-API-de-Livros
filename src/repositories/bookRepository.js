@@ -32,32 +32,22 @@ class BookRepository {
             query.$or.push({ year: Number(term) });
         }
         }
-
-
         //filtros específicos
-        if (title) query.title = new RegExp(title, 'i'); //RegExp(..., 'i') permite busca parcial e case-insensitive.
-        if (author) query.author = new RegExp(author, 'i');
-        if (genre) query.genre = new RegExp(genre, 'i');
-        if (year) query.year = Number(year);
+        if (title) query.title = new RegExp(title, "i");
+        if (author) query.author = new RegExp(author, "i");
+        if (genre) query.genre = new RegExp(genre, "i");
+        if (year) query.year = year;
 
-        const pageNum = Math.max(parseInt(page, 10) || 1, 1);
-        const limitNum = (Math.min(parseInt(limit, 10) || 20, 1), 100);
+        const skip = (page - 1) * limit;
 
-        const [items, total] = await Promise.all([
-            Book.find(query)
-                .skip((pageNum - 1) * limitNum)
-                .limit(limitNum),
-            Book.countDocuments(query)
-        ]);
+        const books = await Book.find(query).skip(skip).limit(limit);
+
+        // 🔴 garante que sempre seja array
+        const safeBooks = Array.isArray(books) ? books : [];
+
+        return safeBooks.map(book => bookMapper(book));
     
-        return {
-            data: items,
-            page: pageNum,
-            limit: limitNum,
-            total,
-            hasMore: pageNum * limitNum < total
-        };
-    }
+    };
 }
 
 module.exports = new BookRepository();
