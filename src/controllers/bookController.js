@@ -1,6 +1,6 @@
 const bookService = require('../services/bookService');
 const validateBookData = require('../utils/validateBookData');
-
+const { formatBook, formatBooks } = require('../utils/bookMapper');
 
 class BookController {
     async create (req, res) {
@@ -16,13 +16,7 @@ class BookController {
             }
             
             const book = await bookService.createBook(req.body);
-            res.status(201).json({
-                id: book._id.toString(),
-                title: book.title,
-                author: book.author,
-                year: book.year,
-                genre: book.genre
-            });
+            res.status(201).json(formatBook(book));
         } catch (error) {
             res.status(400).json({ error: error.message });
         }
@@ -36,16 +30,7 @@ class BookController {
             return res.status(200).json({ message: 'Nenhum livro cadastrado.' });
         }
 
-        //converte _id para id
-        const formattedBooks = books.map(book => ({
-            id: book._id.toString(),
-            title: book.title,
-            author: book.author,
-            year: book.year,
-            genre: book.genre
-        }))
-
-        res.json(formattedBooks);
+        res.json(formatBooks(books));
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -57,7 +42,7 @@ class BookController {
             if (!updateBook) {
                 return res.status(404).json({error: 'Livro não encontrado'});
             }
-            res.json(updateBook);
+            res.json(formatBook(updateBook));
         } catch (error) {
             res.status(500).json({error: error.message});
         }
@@ -68,7 +53,9 @@ class BookController {
             if (!deleteBook) {
                 return res.status(404).json({ error: 'Livro não encontrado' });
             }
-            res.json({ message: 'Livro deletado com sucesso.' })
+            res.json({ 
+                ... formatBook(deleteBook),
+                message: 'Livro deletado com sucesso.' })
         } catch(error) {
             res.status(500).json({error: error.message});
         }
@@ -82,7 +69,7 @@ class BookController {
                 return res.status(200).json({ data: [], message: 'Nenhum livro encontrado com os critérios fornecidos' });
             }
     
-            res.json(books);
+            res.json(formatBooks(books));
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
