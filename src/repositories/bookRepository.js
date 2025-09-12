@@ -1,4 +1,5 @@
 const Book = require('../models/book');
+const bookMapper = require('../utils/bookMapper');
 
 class BookRepository {
     async create(book) {
