@@ -42,11 +42,9 @@ class BookRepository {
         const skip = (page - 1) * limit;
 
         const books = await Book.find(query).skip(skip).limit(limit);
+        
+        return books.map(book => formatBook(book));
 
-        // 🔴 garante que sempre seja array
-        const safeBooks = Array.isArray(books) ? books : [];
-
-        return safeBooks.map(book => bookMapper(book));
     
     };
 }
