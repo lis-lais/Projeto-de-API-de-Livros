@@ -69,7 +69,7 @@ class BookController {
                 return res.status(200).json({ data: [], message: 'Nenhum livro encontrado com os critérios fornecidos' });
             }
     
-            res.json(formatBooks(books));
+            res.json(formatBooks(books.data));
         } catch (error) {
             res.status(500).json({ error: error.message });
         }
