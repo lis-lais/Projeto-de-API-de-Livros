@@ -1,5 +1,5 @@
 const Book = require('../models/book');
-const bookMapper = require('../utils/bookMapper');
+const { formatBook } = require('../utils/bookMapper');
 
 class BookRepository {
     async create(book) {
@@ -44,7 +44,6 @@ class BookRepository {
         const books = await Book.find(query).skip(skip).limit(limit);
         
         return books.map(book => formatBook(book));
-
     
     };
 }
