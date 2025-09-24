@@ -3,10 +3,9 @@ const router = express.Router();
 const bookController = require('../controllers/bookController');
 
 // Rotas de livros
-router.post('/books', bookController.create);
-router.get('/books', bookController.list);
-router.get('/books/search', bookController.search);
-router.put('/books/:id', bookController.update);
-router.delete('/books/:id', bookController.delete);
+router.post('/books', bookController.create.bind(bookController));
+router.get('/books', bookController.listAndSearch.bind(bookController)); 
+router.put('/books/:id', bookController.update.bind(bookController));
+router.delete('/books/:id', bookController.delete.bind(bookController));
 
 module.exports = router;
